@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a14">
+  <meta name="description" content="Customizable relaxation sounds for sleep and calm">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Noises</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="logo">Noises</h1>
+      <button id="timer-btn" class="icon-btn" aria-label="Sleep timer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span id="timer-display" class="timer-display hidden"></span>
+      </button>
+    </header>
+
+    <!-- Timer Modal -->
+    <div id="timer-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <h2>Sleep Timer</h2>
+        <div class="timer-options">
+          <button class="timer-option" data-minutes="15">15 min</button>
+          <button class="timer-option" data-minutes="30">30 min</button>
+          <button class="timer-option" data-minutes="45">45 min</button>
+          <button class="timer-option" data-minutes="60">1 hr</button>
+          <button class="timer-option" data-minutes="90">1.5 hr</button>
+          <button class="timer-option" data-minutes="120">2 hr</button>
+        </div>
+        <button id="timer-cancel" class="timer-option timer-cancel hidden">Cancel Timer</button>
+      </div>
+    </div>
+
+    <!-- Preset Modal -->
+    <div id="preset-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <h2>Presets</h2>
+        <div id="preset-list" class="preset-list"></div>
+        <div class="preset-actions">
+          <button id="save-preset-btn" class="btn btn-secondary">Save Current Mix</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Preset Modal -->
+    <div id="save-preset-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <h2>Save Preset</h2>
+        <input type="text" id="preset-name-input" class="text-input" placeholder="My calm mix..." maxlength="30">
+        <div class="preset-actions">
+          <button id="save-preset-confirm" class="btn btn-primary">Save</button>
+          <button id="save-preset-cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sound Categories -->
+    <main class="main">
+      <!-- Category: Binaural Beats -->
+      <section class="category" data-category="binaural">
+        <button class="category-header" aria-expanded="false">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12c0-3 2-6 5-7s6 0 7 3 4 4 7 3"/>
+              <path d="M2 16c0-2 2-5 5-5s5 1 7 4 4 3 7 2"/>
+            </svg>
+          </div>
+          <span class="category-label">Binaural Beats</span>
+          <span class="category-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </button>
+        <div class="category-panel">
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="binaural" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Binaural</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="binaural" min="0" max="100" value="50">
+          </div>
+          <div class="param-group">
+            <label class="param-label">
+              Beat Frequency
+              <span class="param-value" id="binaural-freq-value">4 Hz</span>
+            </label>
+            <input type="range" class="slider param-slider" id="binaural-freq" min="0.5" max="20" step="0.5" value="4">
+            <div class="param-presets">
+              <button class="param-preset" data-freq="2">Delta</button>
+              <button class="param-preset" data-freq="6">Theta</button>
+              <button class="param-preset" data-freq="10">Alpha</button>
+            </div>
+          </div>
+          <div class="param-group">
+            <label class="param-label">
+              Carrier Tone
+              <span class="param-value" id="binaural-carrier-value">180 Hz</span>
+            </label>
+            <input type="range" class="slider param-slider" id="binaural-carrier" min="80" max="400" step="5" value="180">
+          </div>
+        </div>
+      </section>
+
+      <!-- Category: Noise -->
+      <section class="category" data-category="noise">
+        <button class="category-header" aria-expanded="false">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20V10"/>
+              <path d="M8 20V4"/>
+              <path d="M12 20V8"/>
+              <path d="M16 20V6"/>
+              <path d="M20 20V12"/>
+            </svg>
+          </div>
+          <span class="category-label">Noise</span>
+          <span class="category-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </button>
+        <div class="category-panel">
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="noise" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Noise</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="noise" min="0" max="100" value="50">
+          </div>
+          <div class="param-group">
+            <label class="param-label">
+              Color
+              <span class="param-value" id="noise-color-value">Pink</span>
+            </label>
+            <input type="range" class="slider param-slider" id="noise-color" min="0" max="100" value="50">
+            <div class="color-labels">
+              <span>White</span>
+              <span>Pink</span>
+              <span>Brown</span>
+            </div>
+          </div>
+          <div class="param-group flanger-group">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle small" id="flanger-toggle" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Flanger</span>
+            </div>
+            <div class="flanger-params hidden" id="flanger-params">
+              <label class="param-label">
+                Depth
+                <span class="param-value" id="flanger-depth-value">50%</span>
+              </label>
+              <input type="range" class="slider param-slider" id="flanger-depth" min="0" max="100" value="50">
+              <label class="param-label">
+                Rate
+                <span class="param-value" id="flanger-rate-value">0.25 Hz</span>
+              </label>
+              <input type="range" class="slider param-slider" id="flanger-rate" min="5" max="100" step="5" value="25">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category: Nature -->
+      <section class="category" data-category="foley">
+        <button class="category-header" aria-expanded="false">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22c4-4 8-7 8-12a8 8 0 0 0-16 0c0 5 4 8 8 12z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <span class="category-label">Nature</span>
+          <span class="category-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </button>
+        <div class="category-panel">
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="rain" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Rain</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="rain" min="0" max="100" value="50">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="thunder" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Thunder</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="thunder" min="0" max="100" value="40">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="fireplace" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Fireplace</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="fireplace" min="0" max="100" value="50">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="birds" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Birds</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="birds" min="0" max="100" value="40">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="water" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Water Drops</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="water" min="0" max="100" value="35">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="wind" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Wind</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="wind" min="0" max="100" value="45">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="crickets" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Crickets</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="crickets" min="0" max="100" value="35">
+          </div>
+        </div>
+      </section>
+
+      <!-- Category: Musical -->
+      <section class="category" data-category="musical">
+        <button class="category-header" aria-expanded="false">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"/>
+              <circle cx="6" cy="18" r="3"/>
+              <circle cx="18" cy="16" r="3"/>
+            </svg>
+          </div>
+          <span class="category-label">Musical</span>
+          <span class="category-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </button>
+        <div class="category-panel">
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="pad" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Pad</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="pad" min="0" max="100" value="45">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="chords" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Chords</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="chords" min="0" max="100" value="40">
+          </div>
+          <div class="sound-row">
+            <div class="sound-toggle-row">
+              <button class="sound-toggle" data-sound="piano" aria-pressed="false">
+                <span class="toggle-dot"></span>
+              </button>
+              <span class="sound-name">Piano</span>
+            </div>
+            <input type="range" class="slider volume-slider" data-sound="piano" min="0" max="100" value="35">
+          </div>
+          <div class="param-group">
+            <label class="param-label">
+              Key / Mood
+            </label>
+            <div class="param-presets">
+              <button class="param-preset mood-preset active" data-mood="calm">Calm</button>
+              <button class="param-preset mood-preset" data-mood="dreamy">Dreamy</button>
+              <button class="param-preset mood-preset" data-mood="melancholy">Melancholy</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Transport Bar -->
+    <footer class="transport">
+      <div class="transport-left">
+        <button id="play-btn" class="play-btn" aria-label="Play">
+          <svg id="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21"/>
+          </svg>
+          <svg id="pause-icon" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="5" y="3" width="4" height="18" rx="1"/>
+            <rect x="15" y="3" width="4" height="18" rx="1"/>
+          </svg>
+        </button>
+        <button id="preset-btn" class="icon-btn" aria-label="Presets">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+            <circle cx="8" cy="6" r="2" fill="currentColor"/>
+            <circle cx="16" cy="12" r="2" fill="currentColor"/>
+            <circle cx="10" cy="18" r="2" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+      <div class="transport-right">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="volume-icon">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+        <input type="range" class="slider master-slider" id="master-volume" min="0" max="100" value="75">
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
