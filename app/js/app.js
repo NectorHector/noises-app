@@ -3,7 +3,7 @@ import { engine } from './audio/engine.js';
 import { binaural } from './audio/binaural.js';
 import { noise } from './audio/noise.js';
 import { foleySounds } from './audio/foley.js';
-import { pad, chords, piano, setMood } from './audio/musical.js';
+import { pad, chords, piano, setMood, setPitchOffset } from './audio/musical.js';
 import { updateSliderFill, initAllSliders, toggleButton } from './ui/controls.js';
 import { startTimer, clearTimer, isTimerActive, formatTime, setMasterVolumeTarget } from './ui/timer.js';
 import { getCurrentState, hasActiveSounds } from './ui/mixer.js';
@@ -172,36 +172,49 @@ noiseColorSlider.addEventListener('input', () => {
 });
 updateSliderFill(noiseColorSlider);
 
-// Flanger toggle
+// Chorus toggle
 const flangerToggle = document.getElementById('flanger-toggle');
 const flangerParams = document.getElementById('flanger-params');
 flangerToggle.addEventListener('click', () => {
   const isOn = toggleButton(flangerToggle);
   flangerParams.classList.toggle('hidden', !isOn);
-  noise.setFlangerEnabled(isOn);
+  noise.setChorusEnabled(isOn);
 });
 
-// Flanger depth
+// Chorus depth
 const flangerDepth = document.getElementById('flanger-depth');
 const flangerDepthValue = document.getElementById('flanger-depth-value');
 flangerDepth.addEventListener('input', () => {
   updateSliderFill(flangerDepth);
   const val = parseInt(flangerDepth.value);
   flangerDepthValue.textContent = val + '%';
-  noise.setFlangerDepth(val / 100);
+  noise.setChorusDepth(val / 100);
 });
 updateSliderFill(flangerDepth);
 
-// Flanger rate
+// Chorus rate
 const flangerRate = document.getElementById('flanger-rate');
 const flangerRateValue = document.getElementById('flanger-rate-value');
 flangerRate.addEventListener('input', () => {
   updateSliderFill(flangerRate);
   const val = parseInt(flangerRate.value) / 100;
   flangerRateValue.textContent = val.toFixed(2) + ' Hz';
-  noise.setFlangerRate(val);
+  noise.setChorusRate(val);
 });
 updateSliderFill(flangerRate);
+
+// === Pitch Control ===
+const pitchSlider = document.getElementById('pitch-slider');
+const pitchValue = document.getElementById('pitch-value');
+if (pitchSlider) {
+  updateSliderFill(pitchSlider);
+  pitchSlider.addEventListener('input', () => {
+    updateSliderFill(pitchSlider);
+    const val = parseInt(pitchSlider.value);
+    pitchValue.textContent = (val > 0 ? '+' : '') + val;
+    setPitchOffset(val);
+  });
+}
 
 // === Mood Presets ===
 document.querySelectorAll('.mood-preset').forEach(btn => {
@@ -379,7 +392,13 @@ function applyPreset(state) {
     if (state.params.flangerOn !== undefined) {
       flangerToggle.setAttribute('aria-pressed', state.params.flangerOn);
       flangerParams.classList.toggle('hidden', !state.params.flangerOn);
-      noise.setFlangerEnabled(state.params.flangerOn);
+      noise.setChorusEnabled(state.params.flangerOn);
+    }
+    if (state.params.pitch !== undefined && pitchSlider) {
+      pitchSlider.value = state.params.pitch;
+      updateSliderFill(pitchSlider);
+      pitchValue.textContent = (state.params.pitch > 0 ? '+' : '') + state.params.pitch;
+      setPitchOffset(state.params.pitch);
     }
   }
 
@@ -506,6 +525,11 @@ function restoreState() {
       noiseColorSlider.value = state.params.noiseColor;
       updateSliderFill(noiseColorSlider);
       noiseColorValue.textContent = getColorName(state.params.noiseColor);
+    }
+    if (state.params.pitch !== undefined && pitchSlider) {
+      pitchSlider.value = state.params.pitch;
+      updateSliderFill(pitchSlider);
+      pitchValue.textContent = (state.params.pitch > 0 ? '+' : '') + state.params.pitch;
     }
   }
   if (state.mood) {

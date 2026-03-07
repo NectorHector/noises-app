@@ -1,23 +1,23 @@
 /* === CSS Variables & Theme === */
 :root {
-  --bg-primary: #0a0a14;
-  --bg-secondary: #111122;
-  --bg-card: #161628;
-  --bg-card-hover: #1c1c36;
-  --bg-elevated: #1e1e38;
-  --bg-input: #0d0d1a;
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-hover: #181818;
+  --bg-elevated: #141414;
+  --bg-input: #080808;
 
-  --text-primary: #e0dff0;
-  --text-secondary: #8888aa;
-  --text-muted: #555570;
+  --text-primary: #cccccc;
+  --text-secondary: #777777;
+  --text-muted: #444444;
 
-  --accent-blue: #5577cc;
-  --accent-purple: #7755bb;
-  --accent-teal: #44aaaa;
-  --accent-glow: rgba(85, 119, 204, 0.25);
+  --accent: #888888;
+  --accent-dim: #555555;
+  --accent-teal: #668888;
+  --accent-glow: rgba(120, 120, 120, 0.12);
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-active: rgba(85, 119, 204, 0.4);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-active: rgba(150, 150, 150, 0.2);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -155,7 +155,7 @@ body {
 
 .category.active .category-icon {
   background: var(--accent-glow);
-  color: var(--accent-blue);
+  color: var(--accent);
 }
 
 .category-label {
@@ -254,8 +254,8 @@ body {
 
 .param-preset.active {
   background: var(--accent-glow);
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .color-labels {
@@ -445,7 +445,7 @@ body {
 }
 
 .text-input:focus {
-  border-color: var(--accent-blue);
+  border-color: var(--accent);
 }
 
 /* === Buttons === */
@@ -466,7 +466,7 @@ body {
 }
 
 .btn-primary {
-  background: var(--accent-blue);
+  background: var(--accent);
   color: #fff;
 }
 

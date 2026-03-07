@@ -35,6 +35,10 @@ export function getCurrentState() {
   if (flangerDepth) state.params.flangerDepth = parseInt(flangerDepth.value);
   if (flangerRate) state.params.flangerRate = parseInt(flangerRate.value);
 
+  // Pitch
+  const pitchSlider = document.getElementById('pitch-slider');
+  if (pitchSlider) state.params.pitch = parseInt(pitchSlider.value);
+
   // Mood
   const activeMood = document.querySelector('.mood-preset.active');
   if (activeMood) state.mood = activeMood.dataset.mood;

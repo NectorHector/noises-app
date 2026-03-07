@@ -1,27 +1,31 @@
-// Colored Noise Generator with filter and flanger
+// Colored Noise Generator with filter and chorus effect
 import { engine } from './engine.js';
+
+const NUM_CHORUS_VOICES = 3;
 
 class NoiseGenerator {
   constructor() {
     this.sourceNode = null;
     this.filter = null;
-    this.flangerDelay = null;
-    this.flangerLFO = null;
-    this.flangerGain = null;
-    this.flangerWet = null;
     this.gainNode = null;
     this.noiseBuffer = null;
     this.active = false;
-    this.flangerActive = false;
-    this.colorValue = 50; // 0=white, 50=pink, 100=brown
-    this.flangerDepth = 0.003;
-    this.flangerRate = 0.25;
+    this.chorusActive = false;
+    this.colorValue = 50;
+    this.chorusDepth = 0.5;
+    this.chorusRate = 0.25;
+    // Chorus internals
+    this._chorusDelays = [];
+    this._chorusLFOs = [];
+    this._chorusLFOGains = [];
+    this._chorusWetGain = null;
+    this._dryGain = null;
   }
 
   _createNoiseBuffer() {
     const ctx = engine.ctx;
     const sr = ctx.sampleRate;
-    const length = sr * 4; // 4 seconds of noise
+    const length = sr * 6; // 6 seconds for smoother looping
     const buffer = ctx.createBuffer(2, length, sr);
 
     for (let ch = 0; ch < 2; ch++) {
@@ -38,85 +42,94 @@ class NoiseGenerator {
     const ctx = engine.ctx;
     this.gainNode = engine.getChannel('noise');
 
-    // Generate noise buffer
     if (!this.noiseBuffer) {
       this.noiseBuffer = this._createNoiseBuffer();
     }
 
-    // Create buffer source (looping)
     this.sourceNode = ctx.createBufferSource();
     this.sourceNode.buffer = this.noiseBuffer;
     this.sourceNode.loop = true;
 
-    // Create filter for color shaping
+    // Filter with very low resonance
     this.filter = ctx.createBiquadFilter();
     this.filter.type = 'lowpass';
+    this.filter.Q.value = 0.1; // Minimal resonance
     this._applyColor(this.colorValue);
 
-    // Setup flanger
-    this.flangerDelay = ctx.createDelay(0.02);
-    this.flangerDelay.delayTime.value = 0.005;
+    // Dry path
+    this._dryGain = ctx.createGain();
+    this._dryGain.gain.value = 1;
 
-    this.flangerLFO = ctx.createOscillator();
-    this.flangerLFO.type = 'sine';
-    this.flangerLFO.frequency.value = this.flangerRate;
+    // Chorus: multiple delayed copies with LFO-modulated delay times
+    this._chorusWetGain = ctx.createGain();
+    this._chorusWetGain.gain.value = this.chorusActive ? 0.5 : 0;
 
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.value = this.flangerDepth;
-    this.flangerLFO.connect(lfoGain);
-    lfoGain.connect(this.flangerDelay.delayTime);
-    this._lfoGain = lfoGain;
+    this._chorusDelays = [];
+    this._chorusLFOs = [];
+    this._chorusLFOGains = [];
 
-    // Wet/dry mix for flanger
-    this.flangerWet = ctx.createGain();
-    this.flangerWet.gain.value = this.flangerActive ? 0.5 : 0;
+    for (let i = 0; i < NUM_CHORUS_VOICES; i++) {
+      const delay = ctx.createDelay(0.05);
+      // Stagger base delay times for each voice
+      delay.delayTime.value = 0.015 + i * 0.008;
 
-    const dryGain = ctx.createGain();
-    dryGain.gain.value = 1;
-    this._dryGain = dryGain;
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      // Slightly different rates per voice for richness
+      lfo.frequency.value = this.chorusRate * (0.8 + i * 0.3);
 
-    // Route: source → filter → dry → gainNode
-    //                        → flangerDelay → flangerWet → gainNode
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = this.chorusDepth * 0.004;
+
+      lfo.connect(lfoGain);
+      lfoGain.connect(delay.delayTime);
+
+      // Each voice has its own gain for even mix
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.value = 1 / NUM_CHORUS_VOICES;
+
+      this.filter.connect(delay);
+      delay.connect(voiceGain);
+      voiceGain.connect(this._chorusWetGain);
+
+      lfo.start();
+      this._chorusDelays.push(delay);
+      this._chorusLFOs.push(lfo);
+      this._chorusLFOGains.push(lfoGain);
+    }
+
+    // Route
     this.sourceNode.connect(this.filter);
-    this.filter.connect(dryGain);
-    this.filter.connect(this.flangerDelay);
-    this.flangerDelay.connect(this.flangerWet);
-    dryGain.connect(this.gainNode);
-    this.flangerWet.connect(this.gainNode);
+    this.filter.connect(this._dryGain);
+    this._dryGain.connect(this.gainNode);
+    this._chorusWetGain.connect(this.gainNode);
 
     this.sourceNode.start();
-    this.flangerLFO.start();
     this.active = true;
   }
 
   stop() {
     if (!this.active) return;
-    try {
-      this.sourceNode.stop();
-      this.flangerLFO.stop();
-    } catch (e) { /* already stopped */ }
+    try { this.sourceNode.stop(); } catch {}
+    this._chorusLFOs.forEach(lfo => { try { lfo.stop(); } catch {} });
     this.sourceNode = null;
     this.filter = null;
-    this.flangerDelay = null;
-    this.flangerLFO = null;
-    this.flangerWet = null;
+    this._chorusDelays = [];
+    this._chorusLFOs = [];
+    this._chorusLFOGains = [];
+    this._chorusWetGain = null;
     this._dryGain = null;
-    this._lfoGain = null;
     this.active = false;
   }
 
   _applyColor(value) {
     if (!this.filter) return;
-    // 0 = white (high cutoff), 100 = brown (low cutoff)
-    // Map 0-100 to frequency range 20000-200 Hz (logarithmic)
     const minF = Math.log(150);
     const maxF = Math.log(20000);
     const freq = Math.exp(maxF - (value / 100) * (maxF - minF));
     this.filter.frequency.setTargetAtTime(freq, engine.currentTime, 0.1);
-
-    // Increase Q slightly for warmer sound at lower values
-    const q = 0.5 + (value / 100) * 1.5;
-    this.filter.Q.setTargetAtTime(q, engine.currentTime, 0.1);
+    // Very low Q — no resonant peak, just smooth rolloff
+    this.filter.Q.setTargetAtTime(0.1, engine.currentTime, 0.1);
   }
 
   setColor(value) {
@@ -124,32 +137,35 @@ class NoiseGenerator {
     this._applyColor(value);
   }
 
-  setFlangerEnabled(enabled) {
-    this.flangerActive = enabled;
-    if (this.flangerWet) {
-      this.flangerWet.gain.setTargetAtTime(
-        enabled ? 0.5 : 0, engine.currentTime, 0.05
+  setChorusEnabled(enabled) {
+    this.chorusActive = enabled;
+    if (this._chorusWetGain) {
+      this._chorusWetGain.gain.setTargetAtTime(
+        enabled ? 0.5 : 0, engine.currentTime, 0.1
       );
     }
   }
 
-  setFlangerDepth(value) {
-    this.flangerDepth = value * 0.008; // 0-0.008s range
-    if (this._lfoGain) {
-      this._lfoGain.gain.setTargetAtTime(
-        this.flangerDepth, engine.currentTime, 0.05
-      );
-    }
+  setChorusDepth(value) {
+    this.chorusDepth = value;
+    this._chorusLFOGains.forEach((g, i) => {
+      g.gain.setTargetAtTime(value * 0.004, engine.currentTime, 0.05);
+    });
   }
 
-  setFlangerRate(value) {
-    this.flangerRate = value;
-    if (this.flangerLFO) {
-      this.flangerLFO.frequency.setTargetAtTime(
-        value, engine.currentTime, 0.05
+  setChorusRate(value) {
+    this.chorusRate = value;
+    this._chorusLFOs.forEach((lfo, i) => {
+      lfo.frequency.setTargetAtTime(
+        value * (0.8 + i * 0.3), engine.currentTime, 0.05
       );
-    }
+    });
   }
+
+  // Keep old API names working from presets
+  setFlangerEnabled(enabled) { this.setChorusEnabled(enabled); }
+  setFlangerDepth(value) { this.setChorusDepth(value); }
+  setFlangerRate(value) { this.setChorusRate(value); }
 
   setVolume(value) {
     engine.setChannelVolume('noise', value);

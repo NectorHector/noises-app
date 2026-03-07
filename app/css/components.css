@@ -39,12 +39,12 @@
 
 .sound-toggle[aria-pressed="true"] {
   background: var(--accent-glow);
-  border-color: var(--accent-blue);
+  border-color: var(--accent);
 }
 
 .sound-toggle[aria-pressed="true"] .toggle-dot {
   transform: translateX(18px);
-  background: var(--accent-blue);
+  background: var(--accent);
 }
 
 .sound-toggle.small[aria-pressed="true"] .toggle-dot {
@@ -97,12 +97,12 @@
 
 .slider:active::-webkit-slider-thumb {
   transform: scale(1.2);
-  background: var(--accent-blue);
+  background: var(--accent);
 }
 
 .slider:active::-moz-range-thumb {
   transform: scale(1.2);
-  background: var(--accent-blue);
+  background: var(--accent);
 }
 
 .volume-slider {
@@ -118,8 +118,8 @@
 .slider {
   background: linear-gradient(
     to right,
-    var(--accent-blue) 0%,
-    var(--accent-blue) var(--fill, 50%),
+    var(--accent) 0%,
+    var(--accent) var(--fill, 50%),
     var(--bg-input) var(--fill, 50%),
     var(--bg-input) 100%
   );
@@ -128,8 +128,8 @@
 .master-slider {
   background: linear-gradient(
     to right,
-    var(--accent-purple) 0%,
-    var(--accent-purple) var(--fill, 75%),
+    var(--accent-dim) 0%,
+    var(--accent-dim) var(--fill, 75%),
     var(--bg-input) var(--fill, 75%),
     var(--bg-input) 100%
   );
@@ -141,7 +141,7 @@
   height: 48px;
   border-radius: 50%;
   border: none;
-  background: var(--accent-blue);
+  background: var(--accent);
   color: #fff;
   display: flex;
   align-items: center;
