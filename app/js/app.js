@@ -10,6 +10,7 @@ import { getCurrentState, hasActiveSounds } from './ui/mixer.js';
 import { getAllPresets, saveUserPreset, deleteUserPreset } from './ui/presets.js';
 import { requestWakeLock, releaseWakeLock } from './utils/wake-lock.js';
 import { saveLastState, getLastState } from './utils/storage.js';
+import { init as initOrb } from './ui/orb.js';
 
 // Sound module registry
 const soundModules = {
@@ -557,3 +558,4 @@ if ('serviceWorker' in navigator) {
 // Init
 initAllSliders();
 restoreState();
+initOrb(document.getElementById('orb-container'));

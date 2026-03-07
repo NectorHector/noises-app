@@ -1,5 +1,5 @@
 // Service Worker for offline support
-const CACHE_NAME = 'noises-v2';
+const CACHE_NAME = 'noises-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -17,6 +17,7 @@ const ASSETS = [
   './js/ui/mixer.js',
   './js/ui/presets.js',
   './js/ui/timer.js',
+  './js/ui/orb.js',
   './js/utils/storage.js',
   './js/utils/wake-lock.js',
 ];
