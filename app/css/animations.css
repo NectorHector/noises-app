@@ -91,7 +91,7 @@
   flex: 1;
   min-height: 100px;
   position: relative;
-  padding-top: 50%;
+  padding-top: 40%;
 }
 
 .orb-container::before {
