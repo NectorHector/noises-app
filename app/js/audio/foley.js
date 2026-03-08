@@ -492,6 +492,112 @@ function createCrickets(ctx, output) {
   return () => { stopped = true; timeouts.forEach(clearTimeout); };
 }
 
+// === WHALE: deep oceanic whale song with FM synthesis and slow sweeps ===
+function createWhale(ctx, output) {
+  let stopped = false;
+  let timeouts = [];
+
+  // Underwater ambient bed
+  const ambBuf = makeNoiseBuffer(ctx, 10);
+  const ambSrc = ctx.createBufferSource();
+  ambSrc.buffer = ambBuf; ambSrc.loop = true;
+  const ambLp = ctx.createBiquadFilter();
+  ambLp.type = 'lowpass'; ambLp.frequency.value = 400; ambLp.Q.value = 0.3;
+  const ambG = ctx.createGain(); ambG.gain.value = 0.06;
+  ambSrc.connect(ambLp); ambLp.connect(ambG); ambG.connect(output);
+  ambSrc.start();
+
+  // Reverb for underwater depth
+  const reverb = ctx.createConvolver();
+  reverb.buffer = makeReverbIR(ctx, 4, 1.5);
+  const reverbGain = ctx.createGain(); reverbGain.gain.value = 0.45;
+  reverb.connect(reverbGain); reverbGain.connect(output);
+  const dryGain = ctx.createGain(); dryGain.gain.value = 0.55;
+  dryGain.connect(output);
+
+  // Long whale moan — slow frequency sweep with FM vibrato
+  function moan() {
+    if (stopped) return;
+    const now = ctx.currentTime;
+    const baseFreq = 80 + Math.random() * 120;
+    const duration = 3 + Math.random() * 4;
+    const sweepTarget = baseFreq * (0.6 + Math.random() * 0.8);
+
+    const osc = ctx.createOscillator(); osc.type = 'sine';
+    osc.frequency.setValueAtTime(baseFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(sweepTarget, now + duration * 0.7);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.9, now + duration);
+
+    // FM vibrato for organic quality
+    const vibrato = ctx.createOscillator(); vibrato.type = 'sine';
+    vibrato.frequency.value = 3 + Math.random() * 4;
+    const vibG = ctx.createGain(); vibG.gain.value = baseFreq * 0.03;
+    vibrato.connect(vibG); vibG.connect(osc.frequency);
+
+    // Harmonic overtone
+    const osc2 = ctx.createOscillator(); osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(baseFreq * 1.5, now);
+    osc2.frequency.exponentialRampToValueAtTime(sweepTarget * 1.5, now + duration * 0.7);
+    osc2.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, now + duration);
+    const g2 = ctx.createGain(); g2.gain.value = 0;
+    g2.gain.setValueAtTime(0, now);
+    g2.gain.linearRampToValueAtTime(0.06, now + duration * 0.15);
+    g2.gain.setValueAtTime(0.05, now + duration * 0.6);
+    g2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    // Envelope
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.2, now + duration * 0.12);
+    env.gain.setValueAtTime(0.18, now + duration * 0.5);
+    env.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    // Lowpass to soften
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 600; lp.Q.value = 1;
+
+    osc.connect(env); osc2.connect(g2); g2.connect(env);
+    env.connect(lp); lp.connect(dryGain); lp.connect(reverb);
+    osc.start(now); vibrato.start(now); osc2.start(now);
+    osc.stop(now + duration + 0.1);
+    vibrato.stop(now + duration + 0.1);
+    osc2.stop(now + duration + 0.1);
+
+    timeouts.push(setTimeout(moan, (duration + 4 + Math.random() * 8) * 1000));
+  }
+
+  // Short whale chirp/click
+  function chirp() {
+    if (stopped) return;
+    const now = ctx.currentTime;
+    const freq = 300 + Math.random() * 500;
+    const duration = 0.3 + Math.random() * 0.5;
+
+    const osc = ctx.createOscillator(); osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+    osc.frequency.exponentialRampToValueAtTime(freq * (1.5 + Math.random()), now + duration * 0.3);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.7, now + duration);
+
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.1, now + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 800; lp.Q.value = 2;
+
+    osc.connect(env); env.connect(lp); lp.connect(dryGain); lp.connect(reverb);
+    osc.start(now); osc.stop(now + duration + 0.05);
+
+    timeouts.push(setTimeout(chirp, 6000 + Math.random() * 15000));
+  }
+
+  moan();
+  timeouts.push(setTimeout(chirp, 3000 + Math.random() * 5000));
+
+  return () => { stopped = true; timeouts.forEach(clearTimeout); try { ambSrc.stop(); } catch {} };
+}
+
 export const foleySounds = {
   rain: new FoleySound('rain', createRain),
   thunder: new FoleySound('thunder', createThunder),
@@ -500,4 +606,5 @@ export const foleySounds = {
   water: new FoleySound('water', createWaterDrops),
   wind: new FoleySound('wind', createWind),
   crickets: new FoleySound('crickets', createCrickets),
+  whale: new FoleySound('whale', createWhale),
 };

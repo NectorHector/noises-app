@@ -1,5 +1,5 @@
 // Service Worker for offline support
-const CACHE_NAME = 'noises-v14';
+const CACHE_NAME = 'noises-v15';
 const ASSETS = [
   './',
   './index.html',
