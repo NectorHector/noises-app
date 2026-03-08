@@ -87,7 +87,7 @@
 .orb-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex: 1;
   min-height: 100px;
   position: relative;
