@@ -2,22 +2,23 @@
 :root {
   --bg-primary: #000000;
   --bg-secondary: #0a0a0a;
-  --bg-card: #111111;
-  --bg-card-hover: #181818;
+  --bg-card: #0d0d0d;
+  --bg-card-hover: #141414;
   --bg-elevated: #141414;
   --bg-input: #080808;
 
-  --text-primary: #cccccc;
-  --text-secondary: #777777;
-  --text-muted: #444444;
+  --text-primary: #d4d4d4;
+  --text-secondary: #666666;
+  --text-muted: #333333;
 
-  --accent: #888888;
-  --accent-dim: #555555;
+  --accent: #c0392b;
+  --accent-dim: #8b2920;
+  --accent-warm: #e05a33;
   --accent-teal: #668888;
-  --accent-glow: rgba(120, 120, 120, 0.12);
+  --accent-glow: rgba(192, 57, 43, 0.12);
 
   --border-subtle: rgba(255, 255, 255, 0.04);
-  --border-active: rgba(150, 150, 150, 0.2);
+  --border-active: rgba(192, 57, 43, 0.25);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -85,10 +86,14 @@ body {
 
 .logo {
   font-size: 20px;
-  font-weight: 300;
-  letter-spacing: 2px;
+  font-weight: 250;
+  letter-spacing: 3px;
   text-transform: lowercase;
-  color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.header {
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .timer-display {
@@ -100,7 +105,7 @@ body {
 
 /* === Main Content === */
 .main {
-  flex: 1;
+  flex: 0 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 4px 16px 20px;
@@ -119,10 +124,12 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .category.active {
   border-color: var(--border-active);
+  box-shadow: 0 0 12px 0 rgba(192, 57, 43, 0.06);
 }
 
 .category-header {
@@ -154,7 +161,7 @@ body {
 }
 
 .category.active .category-icon {
-  background: var(--accent-glow);
+  background: rgba(192, 57, 43, 0.1);
   color: var(--accent);
 }
 
@@ -253,9 +260,10 @@ body {
 }
 
 .param-preset.active {
-  background: var(--accent-glow);
+  background: rgba(192, 57, 43, 0.15);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #e8e8e8;
+  box-shadow: 0 0 8px 0 rgba(192, 57, 43, 0.1);
 }
 
 .color-labels {
@@ -372,7 +380,7 @@ body {
 .timer-option.active {
   border-color: var(--accent-teal);
   color: var(--accent-teal);
-  background: rgba(68, 170, 170, 0.1);
+  background: rgba(102, 136, 136, 0.1);
 }
 
 .timer-cancel {
@@ -399,7 +407,7 @@ body {
 }
 
 .preset-item:active {
-  background: var(--bg-card);
+  background: rgba(192, 57, 43, 0.08);
 }
 
 .preset-item-name {
@@ -446,6 +454,7 @@ body {
 
 .text-input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(192, 57, 43, 0.15);
 }
 
 /* === Buttons === */

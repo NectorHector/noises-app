@@ -42,6 +42,7 @@ const pauseIcon = document.getElementById('pause-icon');
 function updatePlayButton() {
   playIcon.classList.toggle('hidden', isPlaying);
   pauseIcon.classList.toggle('hidden', !isPlaying);
+  playBtn.classList.toggle('active', isPlaying);
   // Adjust play icon margin when shown
   playBtn.querySelector('svg:not(.hidden)').style.marginLeft = isPlaying ? '0' : '2px';
 }

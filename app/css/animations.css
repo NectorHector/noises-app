@@ -1,15 +1,29 @@
 /* === Pulse glow on active sounds === */
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 0 0 var(--accent-glow);
+    box-shadow: 0 0 0 0 rgba(192, 57, 43, 0);
   }
   50% {
-    box-shadow: 0 0 12px 2px var(--accent-glow);
+    box-shadow: 0 0 10px 1px rgba(192, 57, 43, 0.08);
   }
 }
 
 .category.active {
   animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* === Play button pulse when active === */
+@keyframes playPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(192, 57, 43, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(192, 57, 43, 0.35);
+  }
+}
+
+.play-btn.active {
+  animation: playPulse 6s ease-in-out infinite;
 }
 
 /* === Smooth category panel open/close === */
@@ -61,11 +75,11 @@
   }
 
   .play-btn:hover {
-    box-shadow: 0 4px 20px var(--accent-glow);
+    box-shadow: 0 0 20px rgba(192, 57, 43, 0.25);
   }
 
   .preset-item:hover {
-    background: var(--bg-card);
+    background: rgba(192, 57, 43, 0.06);
   }
 }
 
@@ -76,10 +90,23 @@
   align-items: center;
   flex: 1;
   min-height: 100px;
+  position: relative;
+  padding-top: 50%;
+}
+
+.orb-container::before {
+  content: '';
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 57, 43, 0.06) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .plasma-canvas {
   width: 140px;
   height: 140px;
   image-rendering: auto;
+  position: relative;
 }
