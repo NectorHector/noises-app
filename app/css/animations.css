@@ -94,6 +94,7 @@
   bottom: var(--transport-height);
   height: 200px;
   pointer-events: none;
+  z-index: 10;
 }
 
 .orb-container::before {
