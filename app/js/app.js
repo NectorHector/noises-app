@@ -3,7 +3,7 @@ import { engine } from './audio/engine.js';
 import { binaural } from './audio/binaural.js';
 import { noise } from './audio/noise.js';
 import { foleySounds } from './audio/foley.js';
-import { pad, chords, piano, setMood, setPitchOffset } from './audio/musical.js';
+import { pad, piano, setMood, setPitchOffset } from './audio/musical.js';
 import { updateSliderFill, initAllSliders, toggleButton } from './ui/controls.js';
 import { startTimer, clearTimer, isTimerActive, formatTime, setMasterVolumeTarget } from './ui/timer.js';
 import { getCurrentState, hasActiveSounds } from './ui/mixer.js';
@@ -18,7 +18,6 @@ const soundModules = {
   noise,
   ...foleySounds,
   pad,
-  chords,
   piano,
 };
 
@@ -174,36 +173,25 @@ noiseColorSlider.addEventListener('input', () => {
 });
 updateSliderFill(noiseColorSlider);
 
-// Chorus toggle
-const flangerToggle = document.getElementById('flanger-toggle');
-const flangerParams = document.getElementById('flanger-params');
-flangerToggle.addEventListener('click', () => {
-  const isOn = toggleButton(flangerToggle);
-  flangerParams.classList.toggle('hidden', !isOn);
-  noise.setChorusEnabled(isOn);
+// Reverb toggle
+const reverbToggle = document.getElementById('reverb-toggle');
+const reverbParams = document.getElementById('reverb-params');
+reverbToggle.addEventListener('click', () => {
+  const isOn = toggleButton(reverbToggle);
+  reverbParams.classList.toggle('hidden', !isOn);
+  noise.setReverbEnabled(isOn);
 });
 
-// Chorus depth
-const flangerDepth = document.getElementById('flanger-depth');
-const flangerDepthValue = document.getElementById('flanger-depth-value');
-flangerDepth.addEventListener('input', () => {
-  updateSliderFill(flangerDepth);
-  const val = parseInt(flangerDepth.value);
-  flangerDepthValue.textContent = val + '%';
-  noise.setChorusDepth(val / 100);
+// Reverb amount
+const reverbAmount = document.getElementById('reverb-amount');
+const reverbAmountValue = document.getElementById('reverb-amount-value');
+reverbAmount.addEventListener('input', () => {
+  updateSliderFill(reverbAmount);
+  const val = parseInt(reverbAmount.value);
+  reverbAmountValue.textContent = val + '%';
+  noise.setReverbAmount(val / 100);
 });
-updateSliderFill(flangerDepth);
-
-// Chorus rate
-const flangerRate = document.getElementById('flanger-rate');
-const flangerRateValue = document.getElementById('flanger-rate-value');
-flangerRate.addEventListener('input', () => {
-  updateSliderFill(flangerRate);
-  const val = parseInt(flangerRate.value) / 100;
-  flangerRateValue.textContent = val.toFixed(2) + ' Hz';
-  noise.setChorusRate(val);
-});
-updateSliderFill(flangerRate);
+updateSliderFill(reverbAmount);
 
 // === Pitch Control ===
 const pitchSlider = document.getElementById('pitch-slider');
@@ -394,10 +382,16 @@ function applyPreset(state) {
       noiseColorValue.textContent = getColorName(state.params.noiseColor);
       noise.setColor(state.params.noiseColor);
     }
-    if (state.params.flangerOn !== undefined) {
-      flangerToggle.setAttribute('aria-pressed', state.params.flangerOn);
-      flangerParams.classList.toggle('hidden', !state.params.flangerOn);
-      noise.setChorusEnabled(state.params.flangerOn);
+    if (state.params.reverbOn !== undefined) {
+      reverbToggle.setAttribute('aria-pressed', state.params.reverbOn);
+      reverbParams.classList.toggle('hidden', !state.params.reverbOn);
+      noise.setReverbEnabled(state.params.reverbOn);
+    }
+    if (state.params.reverbAmount !== undefined) {
+      reverbAmount.value = state.params.reverbAmount;
+      updateSliderFill(reverbAmount);
+      reverbAmountValue.textContent = state.params.reverbAmount + '%';
+      noise.setReverbAmount(state.params.reverbAmount / 100);
     }
     if (state.params.pitch !== undefined && pitchSlider) {
       pitchSlider.value = state.params.pitch;

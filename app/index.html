@@ -162,24 +162,19 @@
               <span>Brown</span>
             </div>
           </div>
-          <div class="param-group flanger-group">
+          <div class="param-group">
             <div class="sound-toggle-row">
-              <button class="sound-toggle small" id="flanger-toggle" aria-pressed="false">
+              <button class="sound-toggle small" id="reverb-toggle" aria-pressed="false">
                 <span class="toggle-dot"></span>
               </button>
-              <span class="sound-name">Chorus</span>
+              <span class="sound-name">Reverb</span>
             </div>
-            <div class="flanger-params hidden" id="flanger-params">
+            <div class="reverb-params hidden" id="reverb-params">
               <label class="param-label">
-                Depth
-                <span class="param-value" id="flanger-depth-value">50%</span>
+                Amount
+                <span class="param-value" id="reverb-amount-value">50%</span>
               </label>
-              <input type="range" class="slider param-slider" id="flanger-depth" min="0" max="100" value="50">
-              <label class="param-label">
-                Rate
-                <span class="param-value" id="flanger-rate-value">0.25 Hz</span>
-              </label>
-              <input type="range" class="slider param-slider" id="flanger-rate" min="5" max="100" step="5" value="25">
+              <input type="range" class="slider param-slider" id="reverb-amount" min="0" max="100" value="50">
             </div>
           </div>
         </div>
@@ -222,15 +217,6 @@
           </div>
           <div class="sound-row">
             <div class="sound-toggle-row">
-              <button class="sound-toggle" data-sound="fireplace" aria-pressed="false">
-                <span class="toggle-dot"></span>
-              </button>
-              <span class="sound-name">Fireplace</span>
-            </div>
-            <input type="range" class="slider volume-slider" data-sound="fireplace" min="0" max="100" value="50">
-          </div>
-          <div class="sound-row">
-            <div class="sound-toggle-row">
               <button class="sound-toggle" data-sound="birds" aria-pressed="false">
                 <span class="toggle-dot"></span>
               </button>
@@ -240,30 +226,12 @@
           </div>
           <div class="sound-row">
             <div class="sound-toggle-row">
-              <button class="sound-toggle" data-sound="water" aria-pressed="false">
-                <span class="toggle-dot"></span>
-              </button>
-              <span class="sound-name">Water Drops</span>
-            </div>
-            <input type="range" class="slider volume-slider" data-sound="water" min="0" max="100" value="35">
-          </div>
-          <div class="sound-row">
-            <div class="sound-toggle-row">
               <button class="sound-toggle" data-sound="wind" aria-pressed="false">
                 <span class="toggle-dot"></span>
               </button>
               <span class="sound-name">Wind</span>
             </div>
             <input type="range" class="slider volume-slider" data-sound="wind" min="0" max="100" value="45">
-          </div>
-          <div class="sound-row">
-            <div class="sound-toggle-row">
-              <button class="sound-toggle" data-sound="crickets" aria-pressed="false">
-                <span class="toggle-dot"></span>
-              </button>
-              <span class="sound-name">Crickets</span>
-            </div>
-            <input type="range" class="slider volume-slider" data-sound="crickets" min="0" max="100" value="35">
           </div>
           <div class="sound-row">
             <div class="sound-toggle-row">
@@ -303,15 +271,6 @@
               <span class="sound-name">Pad</span>
             </div>
             <input type="range" class="slider volume-slider" data-sound="pad" min="0" max="100" value="45">
-          </div>
-          <div class="sound-row">
-            <div class="sound-toggle-row">
-              <button class="sound-toggle" data-sound="chords" aria-pressed="false">
-                <span class="toggle-dot"></span>
-              </button>
-              <span class="sound-name">Chords</span>
-            </div>
-            <input type="range" class="slider volume-slider" data-sound="chords" min="0" max="100" value="40">
           </div>
           <div class="sound-row">
             <div class="sound-toggle-row">

@@ -24,16 +24,14 @@ export function getCurrentState() {
   const binauralFreq = document.getElementById('binaural-freq');
   const binauralCarrier = document.getElementById('binaural-carrier');
   const noiseColor = document.getElementById('noise-color');
-  const flangerToggle = document.getElementById('flanger-toggle');
-  const flangerDepth = document.getElementById('flanger-depth');
-  const flangerRate = document.getElementById('flanger-rate');
+  const reverbToggle = document.getElementById('reverb-toggle');
+  const reverbAmount = document.getElementById('reverb-amount');
 
   if (binauralFreq) state.params.binauralFreq = parseFloat(binauralFreq.value);
   if (binauralCarrier) state.params.binauralCarrier = parseFloat(binauralCarrier.value);
   if (noiseColor) state.params.noiseColor = parseInt(noiseColor.value);
-  if (flangerToggle) state.params.flangerOn = flangerToggle.getAttribute('aria-pressed') === 'true';
-  if (flangerDepth) state.params.flangerDepth = parseInt(flangerDepth.value);
-  if (flangerRate) state.params.flangerRate = parseInt(flangerRate.value);
+  if (reverbToggle) state.params.reverbOn = reverbToggle.getAttribute('aria-pressed') === 'true';
+  if (reverbAmount) state.params.reverbAmount = parseInt(reverbAmount.value);
 
   // Pitch
   const pitchSlider = document.getElementById('pitch-slider');
