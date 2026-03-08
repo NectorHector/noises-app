@@ -237,6 +237,9 @@ document.querySelectorAll('.category-header').forEach(header => {
     });
     if (!expanded) {
       header.setAttribute('aria-expanded', 'true');
+      setTimeout(() => {
+        header.closest('.category').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 320);
     }
   });
 });

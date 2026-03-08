@@ -110,7 +110,7 @@ body {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 16px 220px;
+  padding: 4px 16px 320px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
