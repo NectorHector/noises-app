@@ -87,11 +87,13 @@
 .orb-container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  flex: 1;
-  min-height: 100px;
-  position: relative;
-  padding-top: 33%;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--transport-height);
+  height: 200px;
+  pointer-events: none;
 }
 
 .orb-container::before {

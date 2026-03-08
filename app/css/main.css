@@ -67,6 +67,7 @@ body {
   flex-direction: column;
   height: 100%;
   max-width: 480px;
+  position: relative;
   margin: 0 auto;
   padding-top: var(--safe-top);
   padding-bottom: var(--safe-bottom);
@@ -105,10 +106,11 @@ body {
 
 /* === Main Content === */
 .main {
-  flex: 0 1 auto;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 16px 20px;
+  padding: 4px 16px 220px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
